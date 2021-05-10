@@ -72,44 +72,36 @@
 						{
 							"key": "auth_token",
 							"value": "{{token}}",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "age",
 							"value": "18",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "salary",
 							"value": "3000",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "name",
 							"value": "Natalia",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						}
 					]
 				},
 				"url": {
-					"raw": "{{url}}/new_data",
+					"raw": "{{url}}/login",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"new_data"
-					],
-					"query": [
-						{
-							"key": "login",
-							"value": "Natalia",
-							"disabled": true
-						},
-						{
-							"key": "password",
-							"value": "123",
-							"disabled": true
-						}
+						"login"
 					]
 				}
 			},
@@ -162,12 +154,7 @@
 							"value": "Natalia",
 							"type": "text"
 						}
-					],
-					"options": {
-						"raw": {
-							"language": "text"
-						}
-					}
+					]
 				},
 				"url": {
 					"raw": "{{url}}/new_data",
@@ -225,12 +212,12 @@
 					"formdata": [
 						{
 							"key": "login",
-							"value": "str",
+							"value": "Aliaksei",
 							"type": "text"
 						},
 						{
 							"key": "password",
-							"value": "str",
+							"value": "123",
 							"type": "text"
 						}
 					]
@@ -258,7 +245,7 @@
 							"pm.test(\"Status code is 200\", function () {\r",
 							"    pm.response.to.have.status(200);\r",
 							"});\r",
-							"\r",
+							"// отправлять через raw JSON\r",
 							"pm.test(\"Body matches string\", function () {\r",
 							"pm.expect(pm.response.text()).to.include(\"name\" , \"age\" , \"salary\");\r",
 							"});\r",
@@ -277,7 +264,7 @@
 							"pm.test(\"json answer\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData.person.u_age).to.eql(29);\r",
-							"    pm.expect(jsonData.person.u_name[0]).to.eql(\"Aliaksei\");\r",
+							"    pm.expect(jsonData.person.u_name[0]).to.be.null;\r",
 							"    pm.expect(jsonData.person.u_name[1]).to.eql(3000);\r",
 							"    pm.expect(jsonData.person.u_name[2]).to.eql(29);\r",
 							"});\r",
@@ -302,6 +289,9 @@
 							"\r",
 							"\r",
 							"\r",
+							"\r",
+							"\r",
+							"\r",
 							""
 						],
 						"type": "text/javascript"
@@ -313,7 +303,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"auth_token\": \" {{token}}\",\r\n    \"name\": \"Aliaksei\",\r\n    \"age\": 29,\r\n    \"salary\":3000\r\n    \r\n    }",
+					"raw": "{\r\n    \"auth_token\": \" {{token}}\",\r\n    \"name\": \"123\",\r\n    \"age\": 29,\r\n    \"salary\":3000\r\n    \r\n    }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -480,7 +470,9 @@
 							"    pm.expect(jsonData.daily_food).to.be.an(\"Number\");\r",
 							"    pm.expect(jsonData.daily_sleep).to.be.an(\"Number\");\r",
 							"    pm.expect(jsonData.name).to.be.an(\"String\");\r",
-							"});"
+							"});\r",
+							"\r",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -533,6 +525,31 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"//тест статус кода 200\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"//2) проверка ответа json\r",
+							"pm.test(\"json answer2\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an(\"object\");\r",
+							"    pm.expect(jsonData.age).to.be.an(\"String\");\r",
+							"    pm.expect(jsonData.name).to.be.an(\"string\");\r",
+							"    pm.expect(jsonData.salary).to.be.an(\"Number\");\r",
+							"    pm.expect(jsonData.family.children).to.be.an(\"array\");\r",
+							"    pm.expect(jsonData.family.children).to.be.an(\"array\");\r",
+							"    pm.expect(jsonData.family.children[0][0]).to.be.an(\"String\");\r",
+							"    pm.expect(jsonData.family.children[1][0]).to.be.an(\"String\");\r",
+							"    pm.expect(jsonData.family.children[0][1]).to.be.an(\"Number\");\r",
+							"    pm.expect(jsonData.family.children[1][1]).to.be.an(\"Number\");\r",
+							"});\r",
+							"//3) Проверить что занчение поля name = значению переменной name из окружения\r",
+							"pm.test(\"environment name=name\", function () {\r",
+							"    pm.expect(pm.environment.get(\"name\")).to.equal(\"Aliaksei\");\r",
+							"});\r",
+							"//4)Проверить что занчение поля age в ответе соответсвует отправленному в запросе значению поля age\r",
+							"var request_data = request.data;\r",
+							"console.log(request_data.age);\r",
 							""
 						],
 						"type": "text/javascript"
@@ -586,6 +603,188 @@
 							"value": null,
 							"disabled": true
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DZ_1.5Currency",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//1) Можете взять любой объект из присланного списка, используйте js random\r",
+							"const namData = pm.response.json();\r",
+							"let object = namData[Math.floor(Math.random()*namData.length)];\r",
+							"console.log(object);\r",
+							"//В объекте возьмите Cur_ID и передать через окружение в следующий запрос.\r",
+							"pm.environment.set(\"Cur_ID\", object.Cur_ID);\r",
+							"\r",
+							"console.log(namData.length); //227\r",
+							"\r",
+							"\r",
+							"\t"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "auth_token",
+							"value": "{{token}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/currency",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"currency"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DZ_1.6curr_byn",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//тест статус кода 200\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"//2)проверка структуры json в ответе\r",
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"Cur_abbreviation\": {\"type\": \"String\"},\r",
+							"        \"Cur_ID\": {\"type\": \"integer\"},\r",
+							"        \"Cur_Name\":{\"type\":\"String\"},\r",
+							"        \"Cur_Scale\": {\"type\":\"String\"}\r",
+							"    }};\r",
+							"    pm.test('json is valid', function() {\r",
+							"        let jsonData = pm.response.json();\r",
+							"        pm.expect(tv4.validate(jsonData,schema));\r",
+							"    });\r",
+							"    "
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "auth_token",
+							"value": "{{token}}",
+							"type": "text"
+						},
+						{
+							"key": "curr_code",
+							"value": "{{Cur_ID}}",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/curr_byn",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"curr_byn"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "***",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"exchange rate\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    var numberSelected = 0;\r",
+							"    for (var i=0; i<jsonData.length; i++){\r",
+							"        pm.environment.set(\"curr_code\" , jsonData[i].Cur_ID);\r",
+							"        const options = {\r",
+							"            'method' : 'POST',\r",
+							"            'url': 'http://116.203.27.46:5002/curr_byn',\r",
+							"            'body': {\r",
+							"                'mode': 'formdata',\r",
+							"                'formdata': [\r",
+							"                    {'key': 'auth_token', 'value':pm.variables.get(\"token\")},\r",
+							"                    {'key': 'curr_code', 'value': jsonData[i].Cur_ID}\r",
+							"                ]\r",
+							"            }\r",
+							"            };\r",
+							"pm.sendRequest(options,(error, response) => {\r",
+							"    if (response.code==200)\r",
+							"    {numberSelected++;\r",
+							"console.log (response.json());   \r",
+							"    }\r",
+							"});\r",
+							"    }});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "auth_token",
+							"value": "{{token}}",
+							"type": "text"
+						},
+						{
+							"key": "curr_code",
+							"value": "{{Cur_ID}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/currency",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"currency"
 					]
 				}
 			},
